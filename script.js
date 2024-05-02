@@ -51,6 +51,67 @@ function div_create(classname){
     return ele;
 }
 
+// apply css format or others
+function formatMultipleElements(query, property) {
+    let results = document.querySelectorAll(query);
+    results.forEach(input => {input.style = property;});
+}
+
+// clear the form inputs
+function clearForm() {
+    // clear text
+    document.querySelectorAll('input[type="form-control"]').forEach(input => {
+        input.value = "";
+    });
+    document.querySelectorAll('textarea').forEach(input => {
+        input.value = "";
+    });
+    document.querySelectorAll('input[type="text"]').forEach(input => {
+        input.value = "";
+
+    });
+    // clear checkbox selections
+    document.querySelectorAll('input[type="checkbox"]').forEach(input => {
+        input.checked = false;
+    });
+
+    // clear radio selections
+    document.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.checked = false;
+    });
+}
+
+// Fill up table
+function populateTable(){
+    const tr = document.createElement("tr");
+    let input_R = document.querySelectorAll('input, textarea');
+    let inputs = Array.from(input_R).filter(item => {
+        if (item.type === 'text' || item.type === 'textarea') {
+            return true;
+        } else {
+            return item.checked;
+        }
+    });
+    let foodSelected = 0;
+    for(let i=0; i<inputs.length; i++) {
+        let input = inputs[i];
+        if(input.name==='Food') {
+            if(foodSelected===0) {
+                foodSelected = 1;
+                let foodChoicesQ = document.querySelectorAll('#foodForm input[type="checkbox"]:checked');
+                let foodChoices = [];
+                foodChoicesQ.forEach(food=>foodChoices.push(food.value));
+                addCell(foodChoices.join(', '), tr);
+            }
+        }
+        else{
+            addCell(input.value, tr);
+        }
+    }
+    tbody.appendChild(tr);
+    clearForm();
+}
+
 // Create the label and input for the form fields
 const label_firstName = label_create("label", "for", "first-name", "First Name: ");
 const input_firstName = input_tag("input", "type", "form-control", "id", "first-name", "First Name");
@@ -101,9 +162,6 @@ const input_state = input_tag("input", "type", "form-control", "id", "state", "S
 const label_country = label_create("label", "for", "country", "Country: ");
 const input_country = input_tag("input", "type", "form-control", "id", "country", "Country");
 
-function foo(){
-    var res = document.getElementsByTagName("input");
-}
 const submitButton = button_create("button", "type", "submit", "id", "submit", "Submit", "btn btn-primary btn-md btn-block");
 
 // Build of overall structure
@@ -127,7 +185,6 @@ div_Food.id = "foodForm";
 const div_State = div_create("form-group");
 const div_Country = div_create("form-group");
 const div_Button = div_create("form-group");
-
 
 // Add label and input elements to form div
 div_FirstName.append(label_firstName, break_line(), input_firstName), break_line();
@@ -157,12 +214,6 @@ form.innerHTML = `<h1 id='title'>Form Submission:</h1>`;
 form.append(div_FirstName,div_LastName,div_Address,div_PIN,
     div_Gender,div_Food,div_State,div_Country,div_Button
 );
-
-function formatMultipleElements(query, property) {
-  let results = document.querySelectorAll(query);
-  results.forEach(input => {input.style = property;});
-}
-
 
 // Create table
 const table = document.createElement("table");
@@ -202,59 +253,6 @@ function addCell(value, tr) {
     const cell = document.createElement("td");
     cell.textContent = value;
     tr.appendChild(cell);
-}
-
-function clearForm() {
-    // clear text
-    document.querySelectorAll('input[type="form-control"]').forEach(input => {
-        input.value = "";
-    });
-    document.querySelectorAll('textarea').forEach(input => {
-        input.value = "";
-    });
-    document.querySelectorAll('input[type="text"]').forEach(input => {
-        input.value = "";
-
-    });
-    // clear checkbox selections
-    document.querySelectorAll('input[type="checkbox"]').forEach(input => {
-        input.checked = false;
-    });
-
-    // clear radio selections
-    document.querySelectorAll('input[type="radio"]').forEach(input => {
-        input.checked = false;
-    });
-}
-
-function populateTable(){
-    const tr = document.createElement("tr");
-    let input_R = document.querySelectorAll('input, textarea');
-    let inputs = Array.from(input_R).filter(item => {
-        if (item.type === 'text' || item.type === 'textarea') {
-            return true;
-        } else {
-            return item.checked;
-        }
-    });
-    let foodSelected = 0;
-    for(let i=0; i<inputs.length; i++) {
-        let input = inputs[i];
-        if(input.name==='Food') {
-            if(foodSelected===0) {
-                foodSelected = 1;
-                let foodChoicesQ = document.querySelectorAll('#foodForm input[type="checkbox"]:checked');
-                let foodChoices = [];
-                foodChoicesQ.forEach(food=>foodChoices.push(food.value));
-                addCell(foodChoices.join(', '), tr);
-            }
-        }
-        else{
-            addCell(input.value, tr);
-        }
-    }
-    tbody.appendChild(tr);
-    clearForm();
 }
 
 // Add event listener to the form
